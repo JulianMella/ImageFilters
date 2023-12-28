@@ -64,8 +64,6 @@ def gaussian_blur(image: np.array, expanded_image: np.array, kernel_matrix: np.a
         image[:,:,3:4:1] = 255
 
     for row in range(0, image.shape[1]):  # Rows
-        if row == 1440:
-            break
         for column in range(0, image.shape[0]):  # Columns
             # Define the neighborhood region around the current pixel
             neighborhood_red = expanded_image[column : column + kernel_matrix_size, row : row + kernel_matrix_size, 0:1]
