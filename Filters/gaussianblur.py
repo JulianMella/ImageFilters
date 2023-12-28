@@ -49,6 +49,11 @@ def gaussian_blur(image: np.array, expanded_image: np.array, kernel_matrix: np.a
             green_sum = np.sum(neighborhood_green * kernel_matrix)
             blue_sum = np.sum(neighborhood_blue * kernel_matrix)
 
+            if row == 100 and column == 100:
+                print(red_sum)
+                print(green_sum)
+                print(blue_sum)
+
             # Assign the summed values to the corresponding pixel channels after normalization if needed
             image[column][row][0] = red_sum
             image[column][row][1] = green_sum
