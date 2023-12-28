@@ -101,7 +101,7 @@ Use vectorizaiton with numpy where loops are explictly used
 Gaussian blur separation by using 1D kernels.
 Multithreading to parallelize the computation of separate color channels.
 Minimize unneccesary memory allocation by reusing arrays or preallocating memory where possible.
-Optimize image expansion for border handling
+Optimize image expansion function for border handling
 Use Cython or Numba
 Perform benchmark and profiling using Python's timeit module to detect bottlenecks.
 Rule of thumb: if K x K is the size of the kernel matrix, set Kernel size to be  K = 2 pi sigma
