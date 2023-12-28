@@ -23,7 +23,7 @@ def calculate_kernel_matrix(kernel_width: int, radius : int) -> np.array:
         for y in range(0, kernel_width):
             kernel[x][y] /= sum
 
-    kernel = np.reshape(kernel, (kernel_width,kernel_width,1))
+    kernel = np.reshape(kernel, (kernel_width, kernel_width, 1))
 
     return kernel
 
@@ -58,7 +58,11 @@ def expand_image(image: np.array, kernel_matrix_size: int) -> np.array:
 #Multiply the kernel matrix values with the corresponding pixel values in the local neighbourhood
 #Sum up these products to obtain the new value for the pixel
 def gaussian_blur(image: np.array, expanded_image: np.array, kernel_matrix: np.array, kernel_matrix_size: int) -> np.array:
-    image[:,:,3:4:1] = 255
+
+    #Set transparency level of PNG image to max
+    if image.shape[2] == 4:
+        image[:,:,3:4:1] = 255
+
     for row in range(0, image.shape[1]):  # Rows
         if row == 1440:
             break
