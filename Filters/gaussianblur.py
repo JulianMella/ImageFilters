@@ -1,9 +1,33 @@
-from kernelmatrix import calculate_kernel_matrix
+
 from expandimage import expand_image
 from PIL import Image
 import numpy as np
+import math
 import sys
 
+#Calculate the kernel matrix
+def gaussian_kernel_matrix(radius : int, kernel_width: int) -> np.array:
+    sigma = max(float(radius / 2) , 1)
+    kernel = [[0.0 for _ in range(kernel_width)] for _ in range(kernel_width)]
+
+    sum = 0
+    for x in range(-radius, radius):
+        for y in range(-radius, radius):
+            exponentNumerator = float(-(x * x + y * y))
+            exponentDenominator = (2 * sigma * sigma)
+
+            eExpression = math.pow(math.e, exponentNumerator / exponentDenominator)
+            kernelValue = (eExpression / (2 * math.pi * sigma * sigma))
+            kernel[x + radius][y + radius] = kernelValue
+            sum += kernelValue
+
+    for x in range (0, kernel_width):
+        for y in range(0, kernel_width):
+            kernel[x][y] /= sum
+
+    kernel = np.reshape(kernel, (kernel_width, kernel_width, 1))
+
+    return kernel
 #Place the center of the kernel at each pixel of the image
 #Multiply the kernel matrix values with the corresponding pixel values in the local neighbourhood
 #Sum up these products to obtain the new value for the pixel
@@ -35,7 +59,7 @@ def gaussian_blur(image: np.array, expanded_image: np.array, kernel_matrix: np.a
 def gaussian_filter(image: np.array, radius: int) -> np.array:
     kernel_width = (2 * radius) + 1
 
-    kernel_matrix = calculate_kernel_matrix(radius, kernel_width)
+    kernel_matrix = gaussian_kernel_matrix(radius, kernel_width)
     expanded_image = expand_image(image, kernel_width)
 
     blurred_image = gaussian_blur(np.zeros_like(image), expanded_image, kernel_matrix, kernel_width)
