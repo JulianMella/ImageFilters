@@ -1,11 +1,11 @@
 import math
 import numpy as np
 from PIL import Image
+import sys
+
 
 #Calculate the kernel matrix
-
-
-def calculate_kernel_matrix(kernel_matrix_size: int, stdev: int) -> list:
+def calculate_kernel_matrix(kernel_matrix_size: int, stdev: float) -> list:
     matrix = []
 
     #Gaussian function coefficient
@@ -16,16 +16,18 @@ def calculate_kernel_matrix(kernel_matrix_size: int, stdev: int) -> list:
     y = -(kernel_matrix_size // 2)
 
     for _ in range(kernel_matrix_size):
-        matrix.append([])
+        matrix.append([0] * kernel_matrix_size)
 
-    for row in matrix:
+    for row in range(len(matrix)):
         for col in range(kernel_matrix_size):
             matrix[row][col] = coefficient * math.exp(-(((x ** 2) + (y ** 2)) / (2 * (stdev ** 2))))
             x += 1
         y += 1
+        x = -(kernel_matrix_size // 2)
 
     return matrix
 
+# Expand image in accordance to the kernel matrix size.
 def expand_image(image: np.array, kernel_matrix_size: int) -> np.array:
     expansion_length = kernel_matrix_size // 2
     padded_image = image
@@ -50,21 +52,54 @@ def expand_image(image: np.array, kernel_matrix_size: int) -> np.array:
     bottom_row = np.concatenate((np.concatenate((bottom_left_corner, image[height - expansion_length : height, 0 : ]), axis=1), bottom_right_corner), axis=1)
 
     padded_image = np.concatenate((padded_image, bottom_row), axis=0)
-
+    print(padded_image)
     return padded_image
 
-def gaussian_filter(image: np.array, kernel_matrix_size: int, stdev: int) -> np.array:
+#Place the center of the kernel at each pixel of the image
+#Multiply the kernel matrix values with the corresponding pixel values in the local neighbourhood
+#Sum up these products to obtain the new value for the pixel
+def gaussian_blur(image: np.array, expanded_image: np.array, kernel_matrix: list, kernel_matrix_size: int) -> np.array:
+    red_matrix = expanded_image[0 : kernel_matrix_size, 0 : kernel_matrix_size]
+
+    Image.fromarray(red_matrix).show()
+    Image.fromarray(expanded_image).show()
+    Image.fromarray(image[0:1,0:1]).show()
+    Image.fromarray(image).show()
+    print(red_matrix)
+    """
+    for row in range(image.shape[1] - 1):
+        for column in range(image.shape[0] - 1):
+            red = image[row][column][0]
+            red_matrix = expanded_image[column : kernel_matrix_size, row : kernel_matrix_size, 0:1]
+
+
+            green = image[row][column][1]
+            green_matrix = expanded_image[column : kernel_matrix_size, row : kernel_matrix_size, 0:1]
+
+
+            blue = image[row][column][2]
+            blue_matrix = expanded_image[column : kernel_matrix_size, row : kernel_matrix_size, 0:1]
+
+    """
+
+
+
+    return 0
+
+def gaussian_filter(image: np.array, kernel_matrix_size: int, stdev: float) -> np.array:
     kernel_matrix = calculate_kernel_matrix(kernel_matrix_size, stdev)
+    expanded_image = expand_image(image, kernel_matrix_size)
+    blurred_image = gaussian_blur(image, expanded_image, kernel_matrix, kernel_matrix_size)
 
-    gaussian_blurred_image = np.zeros_like(image)
-
-    return gaussian_blurred_image
+    return blurred_image
 
 
-# Expand image in accordance to the kernel matrix size.
 
 # Perform
 
+#Rule of thumb, if K x K is the size of the kernel matrix, set Kernel size to be  K = 2 pi sigma
 
+# A Separable Gaussian function is more efficient.
 if __name__ == "__main__":
-    gaussian_filter("../Test Image.png", 3, 0)
+    image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
+    gaussian_filter(image, 3, 1)
