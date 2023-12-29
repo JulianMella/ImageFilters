@@ -10,9 +10,10 @@ def sobel_filter(image : np.array, colored : bool) -> np.array:
 
     if colored:
         grey_image = greyscale_filter(image)
-
-    grey_image_blurred = gaussian_blur(grey_image, 1)
-    expanded_image = expand_image(grey_image_blurred, 3)
+    kernel_radius = 2 # Modifiable value, the higher it is the more edges are ignored
+    kernel_width = kernel_radius * 2 + 1
+    grey_image_blurred = gaussian_blur(grey_image, kernel_radius)
+    expanded_image = expand_image(grey_image_blurred, kernel_width + 1)
 
     horizontal_kernel = np.reshape(np.array([[1.0 ,2.0 ,1.0 ], [0.0 ,0.0 ,0.0], [-1.0, -2.0 , -1.0]]), (3,3,1))
     vertical_kernel = np.reshape(np.array([[1.0, 0.0, -1.0], [2.0 ,0.0 ,-2.0], [1.0 ,0.0 ,-1.0]]), (3,3,1))
@@ -21,7 +22,7 @@ def sobel_filter(image : np.array, colored : bool) -> np.array:
 
     for row in range(image.shape[0]):
         for column in range(image.shape[1]):
-            neighbourhood_values = expanded_image[row : row + 3, column : column + 3, 0:1]
+            neighbourhood_values = expanded_image[row + kernel_width : row + kernel_width + 3, column + kernel_width: column + kernel_width + 3, 0:1]
             gx = np.sum(np.multiply(neighbourhood_values, horizontal_kernel))
             gy = np.sum(np.multiply(neighbourhood_values, vertical_kernel))
             sobel_filtered_image[row : row + 1, column : column + 1] = np.sqrt(gx ** 2 + gy ** 2)
