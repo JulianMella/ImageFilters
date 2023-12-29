@@ -31,50 +31,40 @@ def gaussian_kernel_matrix(radius : int, kernel_width: int) -> np.array:
 #Place the center of the kernel at each pixel of the image
 #Multiply the kernel matrix values with the corresponding pixel values in the local neighbourhood
 #Sum up these products to obtain the new value for the pixel
-def gaussian_blur(image: np.array, expanded_image: np.array, kernel_matrix: np.array, kernel_matrix_size: int) -> np.array:
-
-    #Set transparency level of PNG image to max
-    if image.shape[2] == 4:
-        image[:,:,3:4:1] = 255
-
-    for row in range(0, image.shape[1]):  # Rows
-        for column in range(0, image.shape[0]):  # Columns
-            # Define the neighborhood region around the current pixel
-            neighborhood_red = expanded_image[column : column + kernel_matrix_size, row : row + kernel_matrix_size, 0:1]
-            neighborhood_green = expanded_image[column : column + kernel_matrix_size, row : row + kernel_matrix_size, 1:2]
-            neighborhood_blue = expanded_image[column : column + kernel_matrix_size, row : row + kernel_matrix_size, 2:3]
-
-            # Perform element-wise multiplication with the kernel matrix
-            red_sum = np.sum(neighborhood_red * kernel_matrix)
-            green_sum = np.sum(neighborhood_green * kernel_matrix)
-            blue_sum = np.sum(neighborhood_blue * kernel_matrix)
-
-            if row == 100 and column == 100:
-                print(red_sum)
-                print(green_sum)
-                print(blue_sum)
-
-            # Assign the summed values to the corresponding pixel channels after normalization if needed
-            image[column][row][0] = red_sum
-            image[column][row][1] = green_sum
-            image[column][row][2] = blue_sum
-
-    return image.astype("uint8")
-
-def gaussian_filter(image: np.array, radius: int) -> np.array:
+def gaussian_blur(image: np.array, radius : int) -> np.array:
+    gaussian_filtered_image = np.zeros_like(image)
     kernel_width = (2 * radius) + 1
 
     kernel_matrix = gaussian_kernel_matrix(radius, kernel_width)
     expanded_image = expand_image(image, kernel_width)
+    #Set transparency level of PNG image to max
 
-    blurred_image = gaussian_blur(np.zeros_like(image), expanded_image, kernel_matrix, kernel_width)
-    return blurred_image
+    for row in range(image.shape[0]):
+        for column in range(image.shape[1]):
+            neighbourhood_red = expanded_image[row : row + kernel_width, column : column + kernel_width, 0:1]
+            neighbourhood_green = expanded_image[row : row + kernel_width, column : column + kernel_width, 1:2]
+            neighbourhood_blue = expanded_image[row : row + kernel_width, column : column + kernel_width, 2:3]
 
+            red_sum = np.sum(np.multiply(neighbourhood_red, kernel_matrix))
+            green_sum = np.sum(np.multiply(neighbourhood_green, kernel_matrix))
+            blue_sum = np.sum(np.multiply(neighbourhood_blue, kernel_matrix))
+
+            gaussian_filtered_image[row : row + 1, column : column + 1, 0:1] = red_sum
+            gaussian_filtered_image[row : row + 1, column : column + 1, 1:2] = green_sum
+            gaussian_filtered_image[row : row + 1, column : column + 1, 2:3] = blue_sum
+
+    if gaussian_filtered_image.shape[2] == 4:
+        gaussian_filtered_image[:,:,3:4:1] = 255
+
+    return gaussian_filtered_image.astype("uint8")
 
 if __name__ == "__main__":
     image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
+    image2 = np.asarray(Image.open(sys.path[0] + '/../Test Image 2.png'))
+    print(image.shape)
+    print(image2.shape)
     Image.fromarray(image).show()
-    Image.fromarray(gaussian_filter(image, 15)).show()
+    Image.fromarray(gaussian_blur(image, 15)).show()
 
 
 
