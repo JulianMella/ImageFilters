@@ -28,6 +28,7 @@ def gaussian_kernel_matrix(radius : int, kernel_width: int) -> np.array:
     kernel = np.reshape(kernel, (kernel_width, kernel_width, 1))
 
     return kernel
+
 #Place the center of the kernel at each pixel of the image
 #Multiply the kernel matrix values with the corresponding pixel values in the local neighbourhood
 #Sum up these products to obtain the new value for the pixel
@@ -58,11 +59,11 @@ def gaussian_blur(image: np.array, radius : int) -> np.array:
     return gaussian_filtered_image.astype("uint8")
 
 if __name__ == "__main__":
-    image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
+    image1 = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
     image2 = np.asarray(Image.open(sys.path[0] + '/../Valve.png'))
     image3 = np.asarray(Image.open(sys.path[0] + '/../Test Image 2.png'))
 
-    Image.fromarray(gaussian_blur(image, 15)).show()
+    Image.fromarray(gaussian_blur(image1, 15)).show()
     Image.fromarray(gaussian_blur(image2, 15)).show()
     Image.fromarray(gaussian_blur(image3, 15)).show()
 

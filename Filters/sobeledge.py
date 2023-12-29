@@ -1,16 +1,15 @@
-from gaussianblur import gaussian_blur, gaussian_kernel_matrix
+from gaussianblur import gaussian_blur
 from expandimage import expand_image
 from greyscale import greyscale_filter
 from PIL import Image
 import numpy as np
 import sys
 
-def sobel_convolution(image : np.array, colored : bool) -> np.array:
+def sobel_filter(image : np.array, colored : bool) -> np.array:
     grey_image = image
 
     if colored:
         grey_image = greyscale_filter(image)
-
 
     grey_image_blurred = gaussian_blur(grey_image, 1)
     expanded_image = expand_image(grey_image_blurred, 3)
@@ -29,13 +28,10 @@ def sobel_convolution(image : np.array, colored : bool) -> np.array:
 
     if sobel_filtered_image.shape[2] == 4:
         sobel_filtered_image[:,:,3:4] = 255
-    Image.fromarray(sobel_filtered_image).show()
+
     return image.astype("uint8")
-
-def sobel_edge_detector(image : np.array):
-    sobel_convolution(image, True)
-
 
 if __name__ == "__main__":
     image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
-    sobel_edge_detector(image)
+    Image.fromarray(sobel_filter(image, True)).show()
+
