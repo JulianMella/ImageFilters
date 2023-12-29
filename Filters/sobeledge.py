@@ -29,7 +29,7 @@ def sobel_filter(image : np.array, colored : bool) -> np.array:
     if sobel_filtered_image.shape[2] == 4:
         sobel_filtered_image[:,:,3:4] = 255
 
-    return image.astype("uint8")
+    return sobel_filtered_image.astype("uint8")
 
 if __name__ == "__main__":
     image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
