@@ -3,7 +3,7 @@ from expandimage import expand_image
 from greyscale import greyscale_filter
 from PIL import Image
 import numpy as np
-import math
+import sys
 
 def sobel_convolution(image : np.array, colored : bool) -> np.array:
     grey_image = image
@@ -12,8 +12,8 @@ def sobel_convolution(image : np.array, colored : bool) -> np.array:
         grey_image = greyscale_filter(image)
 
 
-    #grey_image_blurred = gaussian_blur(np.zeros_like(image), grey_image, gaussian_kernel_matrix(1, 3), 3)
-    expanded_image = expand_image(grey_image, 3)
+    grey_image_blurred = gaussian_blur(grey_image, 1)
+    expanded_image = expand_image(grey_image_blurred, 3)
 
     horizontal_kernel = np.reshape(np.array([[1.0 ,2.0 ,1.0 ], [0.0 ,0.0 ,0.0], [-1.0, -2.0 , -1.0]]), (3,3,1))
     vertical_kernel = np.reshape(np.array([[1.0, 0.0, -1.0], [2.0 ,0.0 ,-2.0], [1.0 ,0.0 ,-1.0]]), (3,3,1))
@@ -30,12 +30,12 @@ def sobel_convolution(image : np.array, colored : bool) -> np.array:
     if sobel_filtered_image.shape[2] == 4:
         sobel_filtered_image[:,:,3:4] = 255
     Image.fromarray(sobel_filtered_image).show()
-    return image
+    return image.astype("uint8")
 
 def sobel_edge_detector(image : np.array):
     sobel_convolution(image, True)
 
 
 if __name__ == "__main__":
-    image = np.asarray(Image.open("../Valve.png"))
+    image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
     sobel_edge_detector(image)

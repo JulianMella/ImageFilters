@@ -37,7 +37,6 @@ def gaussian_blur(image: np.array, radius : int) -> np.array:
 
     kernel_matrix = gaussian_kernel_matrix(radius, kernel_width)
     expanded_image = expand_image(image, kernel_width)
-    #Set transparency level of PNG image to max
 
     for row in range(image.shape[0]):
         for column in range(image.shape[1]):
@@ -60,11 +59,13 @@ def gaussian_blur(image: np.array, radius : int) -> np.array:
 
 if __name__ == "__main__":
     image = np.asarray(Image.open(sys.path[0] + '/../Test Image.png'))
-    image2 = np.asarray(Image.open(sys.path[0] + '/../Test Image 2.png'))
-    print(image.shape)
-    print(image2.shape)
-    Image.fromarray(image).show()
+    image2 = np.asarray(Image.open(sys.path[0] + '/../Valve.png'))
+    image3 = np.asarray(Image.open(sys.path[0] + '/../Test Image 2.png'))
+
     Image.fromarray(gaussian_blur(image, 15)).show()
+    Image.fromarray(gaussian_blur(image2, 15)).show()
+    Image.fromarray(gaussian_blur(image3, 15)).show()
+
 
 
 

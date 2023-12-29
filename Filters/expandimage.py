@@ -1,8 +1,8 @@
 import numpy as np
 
 # Expand image in accordance to the kernel matrix size.
-def expand_image(image: np.array, kernel_matrix_size: int) -> np.array:
-    expansion_length = kernel_matrix_size // 2 + 1
+def expand_image(image: np.array, kernel_width: int) -> np.array:
+    expansion_length = kernel_width
     padded_image = image
     width = image.shape[0]
     height = image.shape[1]
